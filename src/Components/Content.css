@@ -1,0 +1,23 @@
+.panel1 {
+    background: #ccc;
+    padding: 5px;
+    padding-right: 20px; 
+    border: solid 1px black; 
+    float: left;
+    margin: 15 px;
+}
+
+.label {
+     font-size: 200%; 
+     font-family: serif; 
+     position: relative;  
+     top: 5px;
+     right: 10px;
+     
+}
+
+.button {
+    font-size: 16px;
+    align-items: center;
+    justify-content: center;
+}
