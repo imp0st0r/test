@@ -1,43 +1,63 @@
 import Content from "./Content";
 import "./Component.css"
-import { addComponent, changeCaption, changeHeight, changeVisible, changeWidth } from "../store/actions";
 
- const Component = function (props) {
+ const Component = function ({content, changeHeight, changeWidth, changeCaption, changeVisible, addComponent, changeHeightForPanel, changeWidthForPanel, changeCaptionForPanel, changeVisibleForPanel, addComponentForPanel}) {
    
   let wayValue = ''
   let newValue = ''
 
-  const dispatch = props.dispatch
-
   const ProcessingContent = () => {             
     wayValue = document.getElementById('way').value   
-    newValue = document.getElementById('new_value').value   
+    newValue = document.getElementById('new_value').value  
 
   /*  'content[2].props.caption'  */
-    if (newValue[0] !== '{') {
+    if (newValue[0] !== '{' && wayValue[12] ==='p') {
       if (newValue[0] === "'") {newValue = newValue.substr(1,newValue.length-2)}
-      if (newValue === "true") {newValue = true}
-      if (newValue === "false") {newValue = false}
-      if (newValue[0] !== "'" && newValue !== "true" && newValue === "false") {newValue = Number(newValue)}
+      if (newValue === "true") {newValue = 1}
+      if (newValue === "false") {newValue = 0}
+      if (newValue[0] !== "'" && newValue !== "true" && newValue !== "false") {newValue = Number(newValue)}
       switch (wayValue.substr(18,wayValue.indexOf("'",19)-18).toUpperCase()) {
         case "CAPTION":
-          dispatch(changeCaption(Number(wayValue[9]), newValue))
+          changeCaption(Number(wayValue[9]), newValue)
           break;
         case "WIDTH":
-          dispatch(changeWidth(Number(wayValue[9]), newValue))
+          changeWidth(Number(wayValue[9]), newValue)
           break;
         case "HEIGHT":
-          dispatch(changeHeight(Number(wayValue[9]), newValue))
+          changeHeight(Number(wayValue[9]), newValue)
           break;
         case "VISIBLE":
-          dispatch(changeVisible(Number(wayValue[9]), newValue))
+          changeVisible(Number(wayValue[9]), newValue)
           break;
         default:
           break;
       }}         
-      
+
+  /*  'content[0].content[0].props.caption'  */
+  if (newValue[0] !== '{' && wayValue[12] ==='c') {
+    if (newValue[0] === "'") {newValue = newValue.substr(1,newValue.length-2)}
+    if (newValue === "true") {newValue = 1}
+    if (newValue === "false") {newValue = 0}
+    if (newValue[0] !== "'" && newValue !== "true" && newValue === "false") {newValue = Number(newValue)}
+    switch (wayValue.substr(29,wayValue.indexOf("'",19)-29).toUpperCase()) {
+      case "CAPTION":
+        changeCaptionForPanel(Number(wayValue[9]), Number(wayValue[20]), newValue)
+        break;
+      case "WIDTH":
+        changeWidthForPanel(Number(wayValue[9]), Number(wayValue[20]), newValue)
+        break;
+      case "HEIGHT":
+        changeHeightForPanel(Number(wayValue[9]), Number(wayValue[20]), newValue)
+        break;
+      case "VISIBLE":
+        changeVisibleForPanel(Number(wayValue[9]), Number(wayValue[20]), newValue)
+        break;
+      default:
+        break;
+    }}
+
   /*  {"type": "label", "props": {"caption": "test", "visible": true}}  */                                  
-    if (newValue[0] === '{')   {
+    if (newValue[0] === '{' && wayValue === '')   {
       const NewValue = JSON.parse(newValue)
       if (NewValue.type === 'label') {
         const contentValue = {
@@ -46,7 +66,7 @@ import { addComponent, changeCaption, changeHeight, changeVisible, changeWidth }
             caption: NewValue.props.caption,
             visible: NewValue.props.visible
           }} 
-        dispatch(addComponent(contentValue))}
+        addComponent(contentValue)}
       if (NewValue.type === 'panel') { 
         const contentValue = {
           type: 'panel',       
@@ -55,20 +75,51 @@ import { addComponent, changeCaption, changeHeight, changeVisible, changeWidth }
             height: NewValue.props.height,
             visible: NewValue.props.visible
           }}
-        dispatch(addComponent(contentValue))}
+        addComponent(contentValue)}
       if (NewValue.type === 'button') { 
         const contentValue = {
           type: 'button',
           props: {             
-            caption: 'button',          
+            caption: NewValue.props.caption,          
             width: NewValue.props.width,
             height: NewValue.props.height,
             visible: NewValue.props.visible
           }}
-       dispatch(addComponent(contentValue))}
-  } 
-} 
+       addComponent(contentValue)}
+  }
 
+  /*   'content[0]'   +     {"type": "label", "props": {"caption": "test", "visible": true}}   */ 
+  if (newValue[0] === '{' && wayValue !== '')   {
+    const NewValue = JSON.parse(newValue)
+    if (NewValue.type === 'label') {
+      const contentValue = {
+        type: 'label',
+        props: {
+          caption: NewValue.props.caption,
+          visible: NewValue.props.visible
+        }} 
+      addComponentForPanel(Number(wayValue[9]), contentValue)}
+    if (NewValue.type === 'panel') { 
+      const contentValue = {
+        type: 'panel',       
+        props: {             
+          width: NewValue.props.width,
+          height: NewValue.props.height,
+          visible: NewValue.props.visible
+        }}
+      addComponentForPanel(Number(wayValue[9]), contentValue)}
+    if (NewValue.type === 'button') { 
+      const contentValue = {
+        type: 'button',
+        props: {             
+          caption: NewValue.props.caption,          
+          width: NewValue.props.width,
+          height: NewValue.props.height,
+          visible: NewValue.props.visible
+        }}
+      addComponentForPanel(Number(wayValue[9]),contentValue)}
+}}
+   
   return (
     <div className="Component">
       <div className="header">
@@ -85,7 +136,7 @@ import { addComponent, changeCaption, changeHeight, changeVisible, changeWidth }
       <button onClick={ProcessingContent}>Применить</button>
 
       <div className="content" id="content">
-      <Content content={props.content}/>
+      <Content content={content}/>
       </div>
     </div>
   );

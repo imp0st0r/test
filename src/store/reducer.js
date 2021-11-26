@@ -52,7 +52,6 @@ export const reducer = (state = InitialState, action) => {
       return {...state, contentElements: contentElement}
     case "CREATE_COMPONENT": 
       let content = []
-      console.log(action)
       switch (action.payload.type) {
         case 'label':
           content = {
@@ -80,8 +79,57 @@ export const reducer = (state = InitialState, action) => {
               break;
         default:
           content = {}}
-      contentElement[0].content.push(content)
+      contentElement.push(content)
       return {...state, contentElements: contentElement}
+
+      case "CHANGE_WIDTH_PANEL":
+        contentElement = state.contentElements
+        contentElement[action.contentId].content[action.contentIdPanel].props.width = action.payload
+        return {...state, contentElements: contentElement}
+      case "CHANGE_HEIGHT_PANEL":
+        contentElement = state.contentElements
+        contentElement[action.contentId].content[action.contentIdPanel].props.height = action.payload
+      return {...state, contentElements: contentElement}
+      case "CHANGE_CAPTION_PANEL":
+        contentElement = state.contentElements
+        contentElement[action.contentId].content[action.contentIdPanel].props.caption = action.payload
+        return {...state, contentElements: contentElement}
+      case "CHANGE_VISIBLE_PANEL":
+        contentElement = state.contentElements
+        contentElement[action.contentId].content[action.contentIdPanel].props.visible = action.payload
+        return {...state, contentElements: contentElement}
+      case "CREATE_COMPONENT_PANEL": 
+        let content_panel = []
+        switch (action.payload.type) {
+          case 'label':
+            content_panel = {
+            type : action.payload.type,
+            props : {
+              caption : action.payload.props.caption,
+              visible : action.payload.props.visible}}
+              break;
+          case 'panel':
+            content_panel = {
+              type : action.payload.type,
+              props : {
+                height : action.payload.props.height,
+                width : action.payload.props.width,
+                visible : action.payload.props.visible}}
+                break;
+          case 'button':
+            content_panel = {
+              type : action.payload.type,
+              props : {
+                height : action.payload.props.height,
+                width : action.payload.props.width,
+                caption : action.payload.props.caption,
+                visible : action.payload.props.visible}}
+                break;
+          default:
+            content_panel = {}}
+        contentElement[action.contentIdPanel].content.push(content_panel)
+        return {...state, contentElements: contentElement}
+
     default:
       return state
   }
